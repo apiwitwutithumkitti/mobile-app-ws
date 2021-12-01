@@ -1,6 +1,7 @@
 package com.appsdeveloperblog.app.ws.mobileappws.service.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.appsdeveloperblog.app.ws.mobileappws.io.entity.UserEntity;
 import com.appsdeveloperblog.app.ws.mobileappws.io.repositories.UserRepository;
@@ -10,6 +11,9 @@ import com.appsdeveloperblog.app.ws.mobileappws.shared.dto.UserDto;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -81,5 +85,26 @@ public class UserServiceImpl implements UserService {
 
         return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
     }
+
+	@Override
+	public List<UserDto> getUser(int page, int limit) {
+		
+		if (page > 0) page -= 1;
+		
+		Pageable pageableRequest = PageRequest.of(page, limit);
+		
+		Page<UserEntity> usersPage = userRepository.findAll(pageableRequest);
+		List<UserEntity> users = usersPage.getContent();
+		
+		List<UserDto> returnValue = new ArrayList<>();
+		
+		for (UserEntity userEntity : users) {
+			UserDto userDto = new UserDto();
+			BeanUtils.copyProperties(userEntity, userDto);
+			returnValue.add(userDto);
+		}
+		
+		return returnValue;
+	}
     
 }
