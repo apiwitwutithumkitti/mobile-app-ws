@@ -2,11 +2,13 @@ package com.appsdeveloperblog.app.ws.mobileappws.service.impl;
 
 import java.util.ArrayList;
 
+import com.appsdeveloperblog.app.ws.mobileappws.exceptions.UserServiceException;
 import com.appsdeveloperblog.app.ws.mobileappws.io.entity.UserEntity;
 import com.appsdeveloperblog.app.ws.mobileappws.io.repositories.UserRepository;
 import com.appsdeveloperblog.app.ws.mobileappws.service.UserService;
 import com.appsdeveloperblog.app.ws.mobileappws.shared.Utils;
 import com.appsdeveloperblog.app.ws.mobileappws.shared.dto.UserDto;
+import com.appsdeveloperblog.app.ws.mobileappws.ui.model.response.ErrorMessages;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +56,7 @@ public class UserServiceImpl implements UserService {
     public UserDto getUser(String email) {
     	UserEntity userEntity = userRepository.findByEmail(email);
     	
-    	if (userEntity == null) throw new UsernameNotFoundException(email);
+    	if (userEntity == null) throw new UsernameNotFoundException("User with Email : " + email + " not found.");
     	
     	UserDto returnValue = new UserDto();
     	BeanUtils.copyProperties(userEntity, returnValue);
@@ -65,7 +67,7 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserByUserId(String userId) {
     	UserEntity userEntity = userRepository.findByUserId(userId);
     	
-    	if (userEntity == null) throw  new UsernameNotFoundException(userId);
+    	if (userEntity == null) throw  new UsernameNotFoundException("User with Id : " + userId + " not found.");
     	
     	UserDto returnValue = new UserDto();
     	BeanUtils.copyProperties(userEntity, returnValue);
@@ -81,5 +83,15 @@ public class UserServiceImpl implements UserService {
 
         return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
     }
+
+	@Override
+	public void deleteUser(String userId) {
+		UserEntity userEntity = userRepository.findByUserId(userId);
+		
+		if (userEntity == null)
+			throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+			
+		userRepository.delete(userEntity);
+	}
     
 }
