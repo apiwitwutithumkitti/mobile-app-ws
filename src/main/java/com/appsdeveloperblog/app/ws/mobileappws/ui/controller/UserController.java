@@ -1,10 +1,8 @@
 package com.appsdeveloperblog.app.ws.mobileappws.ui.controller;
 
-import com.appsdeveloperblog.app.ws.mobileappws.exceptions.UserServiceException;
 import com.appsdeveloperblog.app.ws.mobileappws.service.UserService;
 import com.appsdeveloperblog.app.ws.mobileappws.shared.dto.UserDto;
 import com.appsdeveloperblog.app.ws.mobileappws.ui.model.request.UserDetailsRequsetModel;
-import com.appsdeveloperblog.app.ws.mobileappws.ui.model.response.ErrorMessages;
 import com.appsdeveloperblog.app.ws.mobileappws.ui.model.response.UserRest;
 
 import org.springframework.beans.BeanUtils;
