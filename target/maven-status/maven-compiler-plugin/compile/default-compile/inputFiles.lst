@@ -1,0 +1,9 @@
+/Users/apiwit/Documents/Education/udemy/RESTful Web Services, Java, Spring boot, Spring MVC and JPA/mobile-app-ws/src/main/java/com/appsdeveloperblog/app/ws/service/UserService.java
+/Users/apiwit/Documents/Education/udemy/RESTful Web Services, Java, Spring boot, Spring MVC and JPA/mobile-app-ws/src/main/java/com/appsdeveloperblog/app/ws/shared/dto/UserDto.java
+/Users/apiwit/Documents/Education/udemy/RESTful Web Services, Java, Spring boot, Spring MVC and JPA/mobile-app-ws/src/main/java/com/appsdeveloperblog/app/ws/service/impl/UserServiceImpl.java
+/Users/apiwit/Documents/Education/udemy/RESTful Web Services, Java, Spring boot, Spring MVC and JPA/mobile-app-ws/src/main/java/com/appsdeveloperblog/app/ws/mobileappws/MobileAppWsApplication.java
+/Users/apiwit/Documents/Education/udemy/RESTful Web Services, Java, Spring boot, Spring MVC and JPA/mobile-app-ws/src/main/java/com/appsdeveloperblog/app/ws/io/entity/UserEntity.java
+/Users/apiwit/Documents/Education/udemy/RESTful Web Services, Java, Spring boot, Spring MVC and JPA/mobile-app-ws/src/main/java/com/appsdeveloperblog/app/ws/ui/model/response/UserRest.java
+/Users/apiwit/Documents/Education/udemy/RESTful Web Services, Java, Spring boot, Spring MVC and JPA/mobile-app-ws/src/main/java/com/appsdeveloperblog/app/ws/ui/controller/UserController.java
+/Users/apiwit/Documents/Education/udemy/RESTful Web Services, Java, Spring boot, Spring MVC and JPA/mobile-app-ws/src/main/java/com/appsdeveloperblog/app/ws/ui/model/request/UserDetailsRequsetModel.java
+/Users/apiwit/Documents/Education/udemy/RESTful Web Services, Java, Spring boot, Spring MVC and JPA/mobile-app-ws/src/main/java/com/appsdeveloperblog/app/ws/UserRepository.java
