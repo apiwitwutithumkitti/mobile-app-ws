@@ -1,5 +1,6 @@
 package com.appsdeveloperblog.app.ws.mobileappws.service.impl;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,9 +9,12 @@ import com.appsdeveloperblog.app.ws.mobileappws.io.entity.UserEntity;
 import com.appsdeveloperblog.app.ws.mobileappws.io.repositories.UserRepository;
 import com.appsdeveloperblog.app.ws.mobileappws.service.UserService;
 import com.appsdeveloperblog.app.ws.mobileappws.shared.Utils;
+import com.appsdeveloperblog.app.ws.mobileappws.shared.dto.AddressDTO;
 import com.appsdeveloperblog.app.ws.mobileappws.shared.dto.UserDto;
 import com.appsdeveloperblog.app.ws.mobileappws.ui.model.response.ErrorMessages;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,10 +42,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto user) {
 
-        if (userRepository.findByEmail(user.getEmail()) != null) throw new RuntimeException("Record already exists");
+        if (userRepository.findByEmail(user.getEmail()) != null) 
+        	throw new RuntimeException("Record already exists");
+        
+        for (int i = 0; i < user.getAddresses().size(); i++) {
+        	AddressDTO address = user.getAddresses().get(i);
+        	address.setUserDetails(user);
+        	address.setAddressId(utils.generateAddressId(30));
+        	user.getAddresses().set(i, address);
+        }
 
-        UserEntity userEntity = new UserEntity();
-        BeanUtils.copyProperties(user, userEntity);
+//        UserEntity userEntity = new UserEntity();
+//        BeanUtils.copyProperties(user, userEntity);
+        ModelMapper modelMapper = new ModelMapper();
+        UserEntity userEntity = modelMapper.map(user, UserEntity.class);
 
         String publicUserID = utils.generateUserId(30);
         userEntity.setUserId(publicUserID);
@@ -50,8 +64,9 @@ public class UserServiceImpl implements UserService {
 
         UserEntity storedUserDetails = userRepository.save(userEntity);
 
-        UserDto returnValue = new UserDto();
-        BeanUtils.copyProperties(storedUserDetails, returnValue);
+//        UserDto returnValue = new UserDto();
+//        BeanUtils.copyProperties(storedUserDetails, returnValue);
+        UserDto returnValue = modelMapper.map(storedUserDetails, UserDto.class);
 
         return returnValue;
     }
@@ -71,10 +86,12 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserByUserId(String userId) {
     	UserEntity userEntity = userRepository.findByUserId(userId);
     	
-    	if (userEntity == null) throw  new UsernameNotFoundException("User with Id : " + userId + " not found.");
+    	if (userEntity == null) throw  new UsernameNotFoundException("User with Id : " + userId + " not found.");	
     	
     	UserDto returnValue = new UserDto();
-    	BeanUtils.copyProperties(userEntity, returnValue);
+    	ModelMapper modelMapper = new ModelMapper();
+    	returnValue = modelMapper.map(userEntity, UserDto.class);
+//    	BeanUtils.copyProperties(userEntity, returnValue);
     	
     	return returnValue;
     }
@@ -117,13 +134,16 @@ public class UserServiceImpl implements UserService {
 		Page<UserEntity> usersPage = userRepository.findAll(pageableRequest);
 		List<UserEntity> users = usersPage.getContent();
 		
-		List<UserDto> returnValue = new ArrayList<>();
+		Type listType = new TypeToken<List<UserDto>> () {}.getType();
 		
-		for (UserEntity userEntity : users) {
-			UserDto userDto = new UserDto();
-			BeanUtils.copyProperties(userEntity, userDto);
-			returnValue.add(userDto);
-		}
+		List<UserDto> returnValue = new ModelMapper().map(users, listType);
+		
+//		List<UserDto> returnValue = new ArrayList<>();
+//		for (UserEntity userEntity : users) {
+//			UserDto userDto = new UserDto();
+//			BeanUtils.copyProperties(userEntity, userDto);
+//			returnValue.add(userDto);
+//		}
 		
 		return returnValue;
 	}
