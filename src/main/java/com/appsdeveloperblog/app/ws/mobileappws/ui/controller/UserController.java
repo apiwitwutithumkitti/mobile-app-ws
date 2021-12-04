@@ -9,6 +9,10 @@ import com.appsdeveloperblog.app.ws.mobileappws.ui.model.response.AddressesRest;
 import com.appsdeveloperblog.app.ws.mobileappws.ui.model.response.OperationStatusModel;
 import com.appsdeveloperblog.app.ws.mobileappws.ui.model.response.RequestOperationStatus;
 import com.appsdeveloperblog.app.ws.mobileappws.ui.model.response.UserRest;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -34,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/users") // http://localhost:8080/users
 public class UserController {
@@ -50,6 +55,8 @@ public class UserController {
     @GetMapping(produces= {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public List<UserRest> getUser(@RequestParam(value="page", defaultValue="0") int page, 
     		@RequestParam(value="limit", defaultValue="2") int limit) {
+    	
+    	log.info("Request Get All Users");
     	List<UserRest> returnValue = new ArrayList<>();
     	
     	List<UserDto> users = userService.getUser(page, limit);
@@ -60,12 +67,19 @@ public class UserController {
     		returnValue.add(userModel);
     	}
     	
+    	log.debug("Response");
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	String json = "\n" + gson.toJson(returnValue);
+    	log.debug(json);
+    	
     	return returnValue;
     }
     
     @GetMapping(path="/{id}", produces= {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public UserRest getUser(@PathVariable String id)
     {
+    	log.info("Request specific user");
+    	
     	UserRest returnValue = new UserRest();
     	
     	ModelMapper modelMapper = new ModelMapper();
@@ -74,6 +88,11 @@ public class UserController {
     	
     	returnValue = modelMapper.map(userDto, UserRest.class);
 //    	BeanUtils.copyProperties(userDto, returnValue);
+    	
+    	log.debug("Response");
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	String json = "\n" + gson.toJson(returnValue);
+    	log.debug(json);
     	
         return returnValue;
     }
@@ -84,6 +103,11 @@ public class UserController {
     		)
     public UserRest createUser(@RequestBody UserDetailsRequsetModel userDetails) throws Exception
     {
+    	log.info("Request create user");
+    	log.debug("Request Body");
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	String json = gson.toJson(userDetails);
+    	log.debug(json);
         
         if (userDetails.getFirstName().isEmpty()) 
         	throw new NullPointerException("The object is null");
@@ -100,6 +124,10 @@ public class UserController {
 //        BeanUtils.copyProperties(createUser, returnValue);
         returnValue = modelMapper.map(createUser, UserRest.class);
 
+        log.debug("Response");
+    	json = "\n" + gson.toJson(returnValue);
+    	log.debug(json);
+        
         return returnValue;
     }
 
@@ -109,12 +137,24 @@ public class UserController {
     		)
     public UserRest updateUser(@PathVariable String id, @RequestBody UserDetailsRequsetModel userDetails)
     {
+    	
+    	log.info("Request update user");
+    	log.debug("User id : " + id);
+    	log.debug("Request Body");
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	String json = gson.toJson(userDetails);
+    	log.debug(json);
+    	
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(userDetails, userDto);
         
         UserDto updateUser = userService.updateUser(id, userDto);
         UserRest returnValue = new UserRest();
         BeanUtils.copyProperties(updateUser, returnValue);
+        
+        log.debug("Response");
+    	json = "\n" + gson.toJson(returnValue);
+    	log.debug(json);
         
         return returnValue;
     }
@@ -124,6 +164,9 @@ public class UserController {
     		)
     public OperationStatusModel deleteUser(@PathVariable String id)
     {
+    	log.info("Request delete user");
+    	log.debug("User id : " + id);
+
     	OperationStatusModel returnValue = new OperationStatusModel();
     	returnValue.setOperationName(RequestOperationName.DELETE.name());
     	
@@ -131,12 +174,21 @@ public class UserController {
     	
     	returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
     	
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	String json = gson.toJson(returnValue);
+    	log.debug(json);
+    	
+    	
         return returnValue;
     }
     
     @GetMapping(path="/{id}/addresses",
     		produces= {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public CollectionModel<AddressesRest> getUserAddresses(@PathVariable String id) {
+    		
+    	log.info("Request get specific user and list all addresses");
+    	log.debug("User id : " + id);
+    	
     	List<AddressesRest> returnValue = new ArrayList<>();
     	
     	List<AddressDTO> addressesDTO = addressesService.getAddresses(id);
@@ -157,6 +209,11 @@ public class UserController {
     	Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class)
     			.getUserAddresses(id))
     			.withSelfRel();
+//    	
+//    	log.debug("Response");
+//    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//    	String json = gson.toJson(returnValue);
+//    	log.debug(json);
     	  	
     	return CollectionModel.of(returnValue, userLink, selfLink);
     	
@@ -165,6 +222,9 @@ public class UserController {
     @GetMapping(path="/{userId}/addresses/{addressId}",
     		produces= {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public EntityModel<AddressesRest> getUserAddress(@PathVariable String userId, @PathVariable String addressId) {
+    	
+    	log.info("Request get specific user and specific addresses");
+    	log.debug("User Id : " + userId + ", Address Id : " + addressId);
     	
     	AddressDTO addressesDto = addressService.getAddress(addressId);
     	
@@ -188,6 +248,11 @@ public class UserController {
 //    	returnValue.add(userAddressesLink);
 //    	returnValue.add(selfLink);
     	
+    	log.debug("Response");
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	String json = gson.toJson(returnValue);
+    	log.debug(json);
+    	  	
     	
     	return EntityModel.of(returnValue, Arrays.asList(userLink, userAddressesLink, selfLink));
     	
