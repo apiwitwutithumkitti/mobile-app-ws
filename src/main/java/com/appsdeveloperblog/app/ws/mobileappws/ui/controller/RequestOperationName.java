@@ -1,5 +1,8 @@
 package com.appsdeveloperblog.app.ws.mobileappws.ui.controller;
 
 public enum RequestOperationName {
-	DELETE, VERIFY_EMAIL
+	DELETE,
+	VERIFY_EMAIL,
+	REQUEST_PASSWORD_REST,
+	PASSWORD_RESET_NAME
 }

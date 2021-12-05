@@ -27,7 +27,7 @@ public class EmailServiceImp implements EmailService {
 			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "utf-8");
 
 			helper.setFrom("noreply@apiwit.com");
-			helper.setTo("murray.powlowski23@ethereal.email");
+			helper.setTo(user.getEmail());
 			helper.setSubject("Verification - " + user.getFirstName());
 			String TEXTBODY = "<h1>Please verify your email address</h1>"
 					+ "<p>Thank you for register with our app. To complete registration process and be able to log in</p>"
@@ -39,6 +39,36 @@ public class EmailServiceImp implements EmailService {
 		} catch (MessagingException e) {
 			log.debug(e.getMessage());
 		}
+	}
+
+	@Override
+	public boolean sendPasswordResetRequest(String firstName, String email, String token) {
+		try {
+			boolean returnValue = false;
+			MimeMessage mimeMessage = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "utf-8");
+			
+			helper.setFrom("noreply@apiwit.com");
+			helper.setTo(email);
+			helper.setSubject("Password Reset - " + firstName);
+			String TEXTBODY = "<p>Hi, $firstName</p>"
+					+ "<p>Somesone has requested to reset your password with our project. If it were not you, please ignore it.</p>"
+					+ "<p>otherwise please click on the link below to set a new password</p>"
+					+ "<a href='http://localhost:8080/user/password-reset-request?token=$tokenValue'> Click this link to Reset Password</a><br /><br />"
+					+ "Thank you!";
+			String textBodyWithToken = TEXTBODY
+					.replace("$tokenValue", token)
+					.replace("$firstName", firstName);
+			mimeMessage.setContent(textBodyWithToken, "text/html; charset=utf-8");
+			mailSender.send(mimeMessage);
+			
+			returnValue = true;
+			
+			return returnValue;
+		} catch (MessagingException e) {
+			log.debug(e.getMessage());
+			return false;
+		} 
 	}
 
 }
