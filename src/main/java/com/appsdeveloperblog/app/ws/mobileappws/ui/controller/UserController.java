@@ -257,5 +257,25 @@ public class UserController {
     	return EntityModel.of(returnValue, Arrays.asList(userLink, userAddressesLink, selfLink));
     	
     }
+    
+    
+    // http://locahost:8080/users/email-verification?token=adafaq
+    @GetMapping(path="/email-verification",
+    		produces= {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public OperationStatusModel verifyEmailToken(@RequestParam(value="token") String token) {
+    	
+    	OperationStatusModel returnValue = new OperationStatusModel();
+    	returnValue.setOperationName(RequestOperationName.VERIFY_EMAIL.name());
+    	
+    	boolean isVerified = userService.verifyEmail(token);
+    	
+    	if (isVerified)
+    		returnValue.setOperationName(RequestOperationStatus.SUCCESS.name());
+    	else 
+    		returnValue.setOperationName(RequestOperationStatus.ERROR.name());    	
+    	
+    	return returnValue;
+    	
+    }
 
 }

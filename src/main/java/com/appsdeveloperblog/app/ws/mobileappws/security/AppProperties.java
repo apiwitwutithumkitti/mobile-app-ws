@@ -13,5 +13,9 @@ public class AppProperties {
 	public String getTokenSecret() {
 		return env.getProperty("tokenSecret");
 	}
+
+	public String getDefaultEmailSender() {
+		return env.getProperty("app.default-email-sender");
+	}
 	
 }
