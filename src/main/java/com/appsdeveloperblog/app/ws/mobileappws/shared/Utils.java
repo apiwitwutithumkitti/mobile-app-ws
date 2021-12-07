@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.Random;
 
 import org.springframework.stereotype.Component;
-
 import com.appsdeveloperblog.app.ws.mobileappws.security.SecurityConstants;
 
 import io.jsonwebtoken.Claims;
