@@ -119,12 +119,16 @@ public class UserServiceImpl implements UserService {
     	
     	UserDto returnValue = new UserDto();
     	
+    	
     	userEntity.setFirstName(user.getFirstName());
     	userEntity.setLastName(user.getLastName());
     	
     	UserEntity updateUserDetails = userRepository.save(userEntity);
     	
-    	BeanUtils.copyProperties(updateUserDetails, returnValue);
+//    	BeanUtils.copyProperties(updateUserDetails, returnValue);
+    	
+    	ModelMapper modelMapper = new ModelMapper();
+    	returnValue = modelMapper.map(updateUserDetails, UserDto.class);
     	
     	return returnValue;
     }

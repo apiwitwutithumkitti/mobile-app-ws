@@ -147,14 +147,21 @@ public class UserController {
     	String json = gson.toJson(userDetails);
     	log.debug(json);
     	
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(userDetails, userDto);
+    	ModelMapper modelMapper = new ModelMapper();
+    	UserDto userDto = modelMapper.map(userDetails, UserDto.class);
+    	
+    	UserDto updateUser = userService.updateUser(id, userDto);
+    	UserRest returnValue = new UserRest();
+    	returnValue = modelMapper.map(updateUser, UserRest.class);
+    	
+//        UserDto userDto = new UserDto();
+//        BeanUtils.copyProperties(userDetails, userDto);
+//        
+//        UserDto updateUser = userService.updateUser(id, userDto);
+//        UserRest returnValue = new UserRest();
+//        BeanUtils.copyProperties(updateUser, returnValue);
         
-        UserDto updateUser = userService.updateUser(id, userDto);
-        UserRest returnValue = new UserRest();
-        BeanUtils.copyProperties(updateUser, returnValue);
-        
-        log.debug("Response");
+        log.info("Response sucessufully.");
     	json = "\n" + gson.toJson(returnValue);
     	log.debug(json);
         
@@ -176,6 +183,7 @@ public class UserController {
     	
     	returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
     	
+    	log.info("Delete successfully.");
     	Gson gson = new GsonBuilder().setPrettyPrinting().create();
     	String json = gson.toJson(returnValue);
     	log.debug(json);
